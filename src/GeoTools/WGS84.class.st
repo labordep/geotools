@@ -26,6 +26,12 @@ WGS84 class >> cleanUp [
 ]
 
 { #category : #properties }
+WGS84 class >> eccentricity [
+
+	^ self eccentricitySquared sqrt
+]
+
+{ #category : #properties }
 WGS84 class >> eccentricitySquared [
 	"~0.0066943799901413165"
 
