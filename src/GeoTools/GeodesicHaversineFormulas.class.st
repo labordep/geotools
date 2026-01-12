@@ -39,9 +39,7 @@ GeodesicHaversineFormulas >> absoluteCoordinatesFrom: anAbsoluteCoordinates dist
 	
 	lon2 := lon1 + ((anAzimuthInRadians sin * angularDistance sin * lat1 cos) 
 		arcTan: ((angularDistance cos) - (lat1 sin * lat2 sin))).
-	
-	"Normalize longitude to [-π, π]"
-	lon2 := (((lon2 + (3 * Float pi)) euclideanModulo: (2 * Float pi)) - Float pi).
+	lon2 := self normalizeLongitude: lon2 preservingHemisphereOf: lon1.
 	
 	^ AbsoluteCoordinates latitudeInRadians: lat2 longitudeInRadians: lon2
 ]

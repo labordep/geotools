@@ -89,3 +89,19 @@ GeodesicFormulas >> haversineDistanceFrom: aFromAbsoluteCoordinate to: aToAbsolu
 	
 	^ self fastDistanceInMetersFrom: aFromAbsoluteCoordinate to: aToAbsoluteCoordinate
 ]
+
+{ #category : #private }
+GeodesicFormulas >> normalizeLongitude: aLongitudeInRadians preservingHemisphereOf: originalLongitudeInRadians [
+	"Normalize longitude to [-π, π] while preserving antimeridian hemisphere"
+
+	| normalized |
+	normalized := (aLongitudeInRadians + (3 * Float pi) euclideanModulo:
+		               2 * Float pi) - Float pi.
+
+	"If both original and result are on/near antimeridian, preserve hemisphere"
+	((originalLongitudeInRadians abs - Float pi) abs < 1e-10 and: [
+		 (normalized abs - Float pi) abs < 1e-10 ]) ifTrue: [
+		^ originalLongitudeInRadians sign * Float pi ].
+
+	^ normalized
+]

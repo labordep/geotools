@@ -102,7 +102,9 @@ GeodesicVincentyFormulas >> absoluteCoordinatesFrom: anAbsoluteCoordinates dista
     lambda := (sinSigma * sinAlpha1) arcTan2: ((cosU1 * cosSigma) - (sinU1 * sinSigma * cosAlpha1)).
     C := ((f / 16) * cosSqAlpha * (4 + (f * (4 - (3 * cosSqAlpha))))).
     L := lambda - ((1 - C) * f * sinAlpha1 * (sigma + (C * sinSigma * (cos2SigmaM + (C * cosSigma * (-1 + (2 * ((cos2SigmaM) squared)))))))).
-    lon2 := (((lon1 + L + (3 * Float pi)) euclideanModulo: (2 * Float pi)) - Float pi).
+
+    lon2 := lon1 + L.
+	 lon2 := self normalizeLongitude: lon2 preservingHemisphereOf: lon1.
 
     ^ AbsoluteCoordinates latitudeInRadians: lat2 longitudeInRadians: lon2
 
