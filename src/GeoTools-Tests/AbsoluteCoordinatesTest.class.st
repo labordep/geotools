@@ -28,8 +28,6 @@ AbsoluteCoordinatesTest >> testAbsoluteCoordinates [
 	self assert: coord latitude isNil.
 	self assert: coord longitudeInDegrees isNil.
 	self assert: coord longitude isNil.
-	self assert: coord altitudeInMeters isNil.
-	self assert: coord altitude isNil.
 	
 	coord latitudeInDegrees: 45.
 	self assert: coord isEmpty equals: false.
@@ -48,8 +46,6 @@ AbsoluteCoordinatesTest >> testAbsoluteCoordinates [
 	coord altitudeInMeters: 100.
 	self assert: coord isEmpty equals: false.
 	self assert: coord isValid equals: true.
-	self assert: coord altitudeInMeters equals: 100.
-	self assert: coord altitude equals: (100 units: #meters).
 ]
 
 { #category : #tests }
@@ -174,19 +170,6 @@ AbsoluteCoordinatesTest >> testAbsoluteCoordinatesLimitations [
 ]
 
 { #category : #tests }
-AbsoluteCoordinatesTest >> testAbsoluteCoordinatesPrintOn [
-	| coord |
-	coord := AbsoluteCoordinates new.
-	self assert: coord printString equals: 'an AbsoluteCoordinates lat --° lon --° alt --m'.
-	
-	coord := AbsoluteCoordinates zero.
-	self assert: coord printString equals: 'an AbsoluteCoordinates lat 0° lon 0° alt 0m'.
-	
-	coord := AbsoluteCoordinates frBrest.
-	self assert: coord printString equals: 'an AbsoluteCoordinates lat 48.3897° lon -4.48333° alt 52m'.
-]
-
-{ #category : #tests }
 AbsoluteCoordinatesTest >> testAbsoluteCoordinatesRandom [
 	| coord |
 	coord := AbsoluteCoordinates random.
@@ -200,6 +183,42 @@ AbsoluteCoordinatesTest >> testAbsoluteCoordinatesRandom [
 	"random not generate an altitude value"
 	self assert: coord altitudeInMeters isNil.
 	self assert: coord altitude isNil.
+]
+
+{ #category : #tests }
+AbsoluteCoordinatesTest >> testAltitude [
+
+	self assert: absCoord altitude isNil.
+
+	absCoord altitudeInMeters: 100.
+	self assert: absCoord altitude equals: (100 units: #meters).
+
+	absCoord altitudeInMeters: 0.
+	self assert: absCoord altitude equals: (0 units: #meters).
+
+	absCoord altitudeInMeters: -100.
+	self assert: absCoord altitude equals: (-100 units: #meters).
+
+	absCoord altitudeInMeters: nil.
+	self assert: absCoord altitude isNil
+]
+
+{ #category : #tests }
+AbsoluteCoordinatesTest >> testAltitudeInMeters [
+
+	self assert: absCoord altitudeInMeters isNil.
+
+	absCoord altitudeInMeters: 100.
+	self assert: absCoord altitudeInMeters equals: 100.
+	
+	absCoord altitudeInMeters: 0.
+	self assert: absCoord altitudeInMeters equals: 0.
+
+	absCoord altitudeInMeters: -100.
+	self assert: absCoord altitudeInMeters equals: -100.
+
+	absCoord altitudeInMeters: nil.
+	self assert: absCoord altitudeInMeters isNil
 ]
 
 { #category : #tests }
@@ -271,6 +290,24 @@ AbsoluteCoordinatesTest >> testFromStringLatitudeLongitude [
 ]
 
 { #category : #tests }
+AbsoluteCoordinatesTest >> testIsBelowSeaLevel [
+
+	self deny: absCoord isBelowSeaLevel.
+
+	absCoord altitudeInMeters: 100.
+	self deny: absCoord isBelowSeaLevel.
+	
+	absCoord altitudeInMeters: 0.
+	self deny: absCoord isBelowSeaLevel.
+
+	absCoord altitudeInMeters: -100.
+	self assert: absCoord isBelowSeaLevel.
+
+	absCoord altitudeInMeters: nil.
+	self deny: absCoord isBelowSeaLevel.
+]
+
+{ #category : #tests }
 AbsoluteCoordinatesTest >> testIsLatLonZero [
 
 	| coord |
@@ -296,6 +333,86 @@ AbsoluteCoordinatesTest >> testIsZero [
 	self assert: coord altitudeInMeters equals: 0.
 	self assert: coord isLatLonZero.
 	self assert: coord isZero.
+]
+
+{ #category : #tests }
+AbsoluteCoordinatesTest >> testPrintAltitudeString [
+
+	self
+		assert: absCoord printAltitudeString
+		equals: 'Not valid altitude'.
+		
+	self
+		assert: AbsoluteCoordinates frBrest printAltitudeString
+		equals: '52m'.
+		
+	self
+		assert: AbsoluteCoordinates zero printAltitudeString
+		equals: '0m'.
+		
+	self
+		assert: (AbsoluteCoordinates latitudeInDegrees: 0 longitudeInDegrees: 0) printAltitudeString
+		equals: 'Not valid altitude'.
+]
+
+{ #category : #tests }
+AbsoluteCoordinatesTest >> testPrintLatitudeString [
+
+	self
+		assert: absCoord printLatitudeString
+		equals: 'Not valid latitude'.
+		
+	self
+		assert: AbsoluteCoordinates frBrest printLatitudeString
+		equals: '48°23''22"N'.
+		
+	self
+		assert: AbsoluteCoordinates zero printLatitudeString
+		equals: '00°00''00"N'.
+		
+	self
+		assert: (AbsoluteCoordinates latitudeInDegrees: 0 longitudeInDegrees: 0) printLatitudeString
+		equals: '00°00''00"N'.
+]
+
+{ #category : #tests }
+AbsoluteCoordinatesTest >> testPrintLongitudeString [
+
+	self
+		assert: absCoord printLongitudeString
+		equals: 'Not valid longitude'.
+		
+	self
+		assert: AbsoluteCoordinates frBrest printLongitudeString
+		equals: '004°29''00"W'.
+		
+	self
+		assert: AbsoluteCoordinates zero printLongitudeString
+		equals: '000°00''00"E'.
+		
+	self
+		assert: (AbsoluteCoordinates latitudeInDegrees: 0 longitudeInDegrees: 0) printLongitudeString
+		equals: '000°00''00"E'.
+]
+
+{ #category : #tests }
+AbsoluteCoordinatesTest >> testPrintOn [
+
+	self
+		assert: (String streamContents: [ :str | absCoord printOn: str ])
+		equals: 'No valid coordinates'.
+		
+	self
+		assert: (String streamContents: [ :str | AbsoluteCoordinates frBrest printOn: str ])
+		equals: '48°23''22"N 004°29''00"W 52m'.
+		
+	self
+		assert: (String streamContents: [ :str | AbsoluteCoordinates zero printOn: str ])
+		equals: '00°00''00"N 000°00''00"E 0m'.
+		
+	self
+		assert: (String streamContents: [ :str | (AbsoluteCoordinates latitudeInDegrees: 0 longitudeInDegrees: 0) printOn: str ])
+		equals: '00°00''00"N 000°00''00"E'.
 ]
 
 { #category : #tests }
