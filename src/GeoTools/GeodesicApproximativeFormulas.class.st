@@ -81,5 +81,7 @@ GeodesicApproximativeFormulas >> azimuthInRadiansFrom: aFromAbsoluteCoordinate t
 { #category : #tools }
 GeodesicApproximativeFormulas >> distanceInMetersFrom: aFromAbsoluteCoordinate to: anEndAbsoluteCoordinate [
 
-	^ self haversineDistanceFrom: aFromAbsoluteCoordinate to: anEndAbsoluteCoordinate
+	^ self
+		  fastDistanceInMetersFrom: aFromAbsoluteCoordinate
+		  to: anEndAbsoluteCoordinate
 ]
