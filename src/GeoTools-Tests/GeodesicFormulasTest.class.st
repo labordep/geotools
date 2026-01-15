@@ -55,9 +55,37 @@ GeodesicFormulasTest >> testAbsoluteCoordinatesFromDistanceInMetersAzimuthInRadi
 	coordinates := geodesicFormulas
 		               absoluteCoordinatesFrom: AbsoluteCoordinates zero
 		               distanceInMeters: 1000
-		               azimuthInRadians: 0.
+		               azimuthInRadians: (0 degreesToRadians).
+	self assert: coordinates class identicalTo: AbsoluteCoordinates.
 	
-	self assert: coordinates class identicalTo: AbsoluteCoordinates
+	"limit cases"
+	"at the extreme south-east, when the requested point in on top (0°) need to return a new south-east point"
+	coordinates := geodesicFormulas
+		               absoluteCoordinatesFrom: (AbsoluteCoordinates latitudeInDegrees: -70 longitudeInDegrees: 180) 
+		               distanceInMeters: 500000
+		               azimuthInRadians: (0 degreesToRadians).
+	self assert: coordinates longitudeInDegrees equals: 180.
+	
+	"at the extreme north-east, when the requested point in on bottom (180°) need to return a new north-east point"
+	coordinates := geodesicFormulas
+		               absoluteCoordinatesFrom: (AbsoluteCoordinates latitudeInDegrees: 70 longitudeInDegrees: 180) 
+		               distanceInMeters: 500000
+		               azimuthInRadians: (180 degreesToRadians).
+	self assert: coordinates longitudeInDegrees equals: 180.
+	
+	"at the extreme north-west, when the requested point in on bottom (180°) need to return a new north-west point"
+	coordinates := geodesicFormulas
+		               absoluteCoordinatesFrom: (AbsoluteCoordinates latitudeInDegrees: 70 longitudeInDegrees: -180) 
+		               distanceInMeters: 500000
+		               azimuthInRadians: (180 degreesToRadians).
+	self assert: coordinates longitudeInDegrees equals: -180.
+	
+	"at the extreme south-west, when the requested point in on bottom (180°) need to return a new south-west point"
+	coordinates := geodesicFormulas
+		               absoluteCoordinatesFrom: (AbsoluteCoordinates latitudeInDegrees: -70 longitudeInDegrees: -180) 
+		               distanceInMeters: 500000
+		               azimuthInRadians: (0 degreesToRadians).
+	self assert: coordinates longitudeInDegrees equals: -180.
 ]
 
 { #category : #tests }
